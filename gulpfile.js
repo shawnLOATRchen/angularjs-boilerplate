@@ -8,6 +8,11 @@ var cleanCSS = require('gulp-clean-css');
 var uglify = require('gulp-uglify');
 var htmlmin = require('gulp-htmlmin');
 var angularTemplatecache = require('gulp-angular-templatecache');
+var browserify = require('browserify')
+var babelify = require('babelify');
+var vinylSourceStream = require('vinyl-source-stream');
+var vinylBuffer = require('vinyl-buffer');
+
 
 gulp.task('browser-sync', function () {
   browserSync.init(null, {
@@ -18,13 +23,26 @@ gulp.task('browser-sync', function () {
   });
 });
 
+gulp.task('browserify', function(){
+  var sources = browserify({
+		entries: './src/index.js',
+		debug: true // Build source maps
+	})
+	.transform(babelify.configure({ presets: ["es2015"] }));
+
+  return sources.bundle()
+    .pipe(vinylSourceStream('es6.js'))
+    .pipe(vinylBuffer())
+    .pipe(gulp.dest('./dist/js'))
+})
+
 gulp.task('html', function partials() {
   return gulp.src(['./src/templates/*.html', './src/components/**/*.html'])
     .pipe(htmlmin({
       collapseWhitespace: true
     }))
     .pipe(angularTemplatecache('templateCacheHtml.js', {
-      module: 'invoice-create-item',
+      module: 'my-app',
       root: 'templates'
     }))
     .pipe(gulp.dest('./dist/js'))
@@ -43,7 +61,11 @@ gulp.task('sass', function () {
 });
 
 gulp.task('script', function () {
-  return gulp.src("./src/**/*.js")
+  return gulp.src([
+      "./src/index.js",
+      "./src/scripts/**/*.js",
+      "./src/components/**/*.js"
+    ])
     .pipe(concat('app.js'))
     // .pipe(uglify())
     .pipe(gulp.dest('./dist/js'))
@@ -51,7 +73,7 @@ gulp.task('script', function () {
 });
 
 gulp.task('rootFile', function () {
-  return gulp.src("./index.html")
+  return gulp.src("./src/index.html")
     .pipe(gulp.dest('./dist'))
     .pipe(browserSync.stream());
 });
