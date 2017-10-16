@@ -8,10 +8,7 @@ var cleanCSS = require('gulp-clean-css');
 var uglify = require('gulp-uglify');
 var htmlmin = require('gulp-htmlmin');
 var angularTemplatecache = require('gulp-angular-templatecache');
-var browserify = require('browserify')
-var babelify = require('babelify');
-var vinylSourceStream = require('vinyl-source-stream');
-var vinylBuffer = require('vinyl-buffer');
+var babel = require('gulp-babel');
 
 
 gulp.task('browser-sync', function () {
@@ -67,6 +64,7 @@ gulp.task('script', function () {
       "./src/components/**/*.js"
     ])
     .pipe(concat('app.js'))
+    .pipe(babel({presets: ['es2015']}))
     // .pipe(uglify())
     .pipe(gulp.dest('./dist/js'))
     .pipe(browserSync.stream());
