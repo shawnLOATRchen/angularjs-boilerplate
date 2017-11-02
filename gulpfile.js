@@ -9,7 +9,6 @@ var uglify = require('gulp-uglify');
 var htmlmin = require('gulp-htmlmin');
 var angularTemplatecache = require('gulp-angular-templatecache');
 var babel = require('gulp-babel');
-var open = require('gulp-open');
 
 
 gulp.task('browser-sync', function () {
