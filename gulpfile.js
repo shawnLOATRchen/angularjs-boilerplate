@@ -9,29 +9,17 @@ var uglify = require('gulp-uglify');
 var htmlmin = require('gulp-htmlmin');
 var angularTemplatecache = require('gulp-angular-templatecache');
 var babel = require('gulp-babel');
+var open = require('gulp-open');
 
 
 gulp.task('browser-sync', function () {
   browserSync.init(null, {
-    open: false,
+    open: true,
     server: {
       baseDir: 'dist'
     }
   });
 });
-
-gulp.task('browserify', function(){
-  var sources = browserify({
-		entries: './src/index.js',
-		debug: true // Build source maps
-	})
-	.transform(babelify.configure({ presets: ["es2015"] }));
-
-  return sources.bundle()
-    .pipe(vinylSourceStream('es6.js'))
-    .pipe(vinylBuffer())
-    .pipe(gulp.dest('./dist/js'))
-})
 
 gulp.task('html', function partials() {
   return gulp.src(['./src/templates/*.html', './src/components/**/*.html'])
